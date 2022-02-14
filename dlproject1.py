@@ -3,7 +3,7 @@
 import numpy as np
 import gzip
 import os
-os.chdir('/Users/mballin2/Desktop')
+os.chdir("C:\\Users\\cole\\Documents\\Spring MSBA")
 
 def parse(path):
     g = gzip.open(path, 'rb')
@@ -16,9 +16,9 @@ for d in parse('meta_Clothing_Shoes_and_Jewelry.json.gz'):
     i += 1
     X = np.array(d['title'])
     print('X (title):\n')
-print(X)
-Y = np.array(d['category'])
-print('\nY (category):\n')
-print(Y)
-if i == 10:
-break
+    print(X)
+    Y = np.array(d['category'])
+    print('\nY (category):\n')
+    print(Y)
+    if i == 10:
+     break

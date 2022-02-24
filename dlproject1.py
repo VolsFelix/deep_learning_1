@@ -3,7 +3,8 @@
 import numpy as np
 import gzip
 import os
-os.chdir("C:\\Users\\cole\\Documents\\Spring MSBA")
+#os.chdir("C:\\Users\\cole\\Documents\\Spring MSBA")
+#os.chdir("C:\\Users\\kevin\\OneDrive\\Documents\\BZAN 554 Deep Learning")
 
 def parse(path):
     g = gzip.open(path, 'rb')

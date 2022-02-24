@@ -4,6 +4,7 @@ import numpy as np
 import gzip
 import os
 os.chdir("C:\\Users\\cole\\Documents\\Spring MSBA")
+os.chdir('C:/Users/jamfo/Documents/Deep Learning') #Jake's import
 
 def parse(path):
     g = gzip.open(path, 'rb')

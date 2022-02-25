@@ -41,17 +41,17 @@ for d in parse('meta_Clothing_Shoes_and_Jewelry.json.gz'):
 tokenizer = nltk.RegexpTokenizer(r"\w+")
 
 tokenized_sents = [tokenizer.tokenize(i) for i in titles]
-#getting rid of duplicate titles
-unique_titles= []
 
+#getting rid of duplicate words in titles
+unique_titles= []
 for sentence in tokenized_sents:
     for word in sentence:
         if word not in unique_titles:
             unique_titles.append(word)
+#############################
 
 
 vectorizer = CountVectorizer(min_df=0, lowercase=False)
-print(vectorizer.get_feature_names)
 vectorizer.fit(unique_titles)
 vectorizer.vocabulary_
 X=vectorizer.transform(titles)

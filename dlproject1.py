@@ -28,11 +28,13 @@ categories=[]
 i = 0
 
 
+
+
 for d in parse('meta_Clothing_Shoes_and_Jewelry.json.gz'):
     i += 1
     X = (d['title'])
     titles.append(X)
-    Y = np.array(d['category'])
+    Y = (d['category'])
     categories.append(Y)
     if i == 100:
         break
@@ -42,6 +44,8 @@ tokenizer = nltk.RegexpTokenizer(r"\w+")
 
 tokenized_sents = [tokenizer.tokenize(i) for i in titles]
 
+
+
 #getting rid of duplicate words in titles
 unique_titles= []
 for sentence in tokenized_sents:
@@ -49,6 +53,36 @@ for sentence in tokenized_sents:
         if word not in unique_titles:
             unique_titles.append(word)
 #############################
+
+cat_list=[]
+unique_cats=[]
+##### Making list of categories
+for i in categories:
+    for j in i:
+        cat_list.append(j)
+
+### Function to find the max length of the categories for padding
+def lengths(x):
+    if isinstance(x,list):
+        yield len(x)
+        for y in x:
+            yield from lengths(y)
+max(lengths(cat_list))
+#####
+
+#Padding Cat list 
+for i in range(len(cat_list)):
+    cat_list[i]=cat_list[i].ljust(max(lengths(cat_list)), '0')
+
+#PADDING CATEGORIES
+for i in range(len(categories)):
+    for j in range(len(categories[i])):
+        categories[i][j]=categories[i][j].ljust(max(lengths(cat_list)), '0')
+
+### padded unique cats       
+for b in cat_list:
+    if b not in unique_cats:
+        unique_cats.append(b)
 
 
 vectorizer = CountVectorizer(min_df=0, lowercase=False)
@@ -66,8 +100,30 @@ df.head()
 Hotcoded_X.iloc[99].sum()
 titles[99]
 
- 
+ ########### category vecorization
+vectorizer = CountVectorizer(min_df=0, lowercase=False,ngram_range=(max(lengths(cat_list)),max(lengths(cat_list))), analyzer='char')
+vectorizer.fit(unique_cats)
+vectorizer.vocabulary_
+Y=vectorizer.transform(char_cat)
+###
+#### hot coding Y
+
+##make each entry of categories into a string for Y
+char_cat=[]
+for i in range(len(categories)):
+    char_cat.append(str(categories[i]))
+
+Hotcoded_Y = pd.DataFrame(Y.toarray(),columns=vectorizer.get_feature_names())
+Hotcoded_Y.head()
+Hotcoded_Y.iloc[0].sum()
+len(categories[0])
+len(Hotcoded_Y)
+
+
+
 ### Office hours
 ## feed in X variables 1 by 1. single row is 1X50000. Make list of unique cats, 10000. matrix is nx10000. set value to 1 where corresponding cat
 #50000 x 100000 y every x is 1 except for where the column corresponds to the word in the title. 
 # for category not looking at words, looking at entire category
+
+

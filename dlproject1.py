@@ -207,6 +207,8 @@ model.evaluate(x=Hotcoded_X,y=ham)
 
 title_list[0]
 yhat
+yh=[]
+yh.append(yhat)
 sorted(range(len(yhat[0])), key=lambda i: yhat[0][i])[-5:]
 category_batch_list[0]
 lookuptable[1070]

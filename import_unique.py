@@ -1,7 +1,6 @@
 # project1
 
 from codecs import lookup_error
-from nis import cat
 from unicodedata import category
 import numpy as np
 import os
@@ -47,9 +46,7 @@ tokenizer = nltk.RegexpTokenizer(r"\w+")
 
 tokenized_titles_batch = [tokenizer.tokenize(i) for i in titles_batch_list]
 #tokenized_title_list=[tokenizer.tokenize(i) for i in title_list]
-len(titles_batch_list)
-len(title_list)
-len(unique_titles)
+
 #getting rid of duplicate words in titles
 T_cat_flat = [item for subcat in tokenized_titles_batch for item in subcat]
 unique_titles= np.unique(np.array(T_cat_flat))
@@ -64,14 +61,14 @@ unique_categories = np.unique(np.array(y_cat_flat))
 from collections import Counter
 words_to_count = (word for word in y_cat_flat if word[:1].isupper())
 c = Counter(words_to_count)
-print(c.most_common(100))
-unique_categories=[key for key, _ in c.most_common(500)]
+
+unique_categories=[key for key, _ in c.most_common(1000)]
 
 #### lookup table
 indices = np.array(range(len(unique_categories)), dtype = np.int64)
-indices
+
 lookuptable = np.column_stack([unique_categories,indices])
-lookuptable
+
 
 
 

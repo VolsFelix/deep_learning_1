@@ -104,15 +104,13 @@ cleaned = [item for item in category_list if not isinstance(item,list)]
 #         if i not in unique_cats:
 #             unique_cats.append(b)
 
-y_cat_flat = [item for subcat in category_list for item in subcat]
-unique_categories = np.unique(np.array(y_cat_flat))
-len(unique_categories)
+
 
 
 vectorizer = CountVectorizer(min_df=0, lowercase=False)
 vectorizer.fit(unique_titles)
 vectorizer.vocabulary_
-X=vectorizer.transform(title_list)
+X=vectorizer.transform([title_list[0]])
 Hotcoded_X = pd.DataFrame(X.toarray(),columns=vectorizer.get_feature_names())
 Hotcoded_X.head()
 
@@ -121,8 +119,8 @@ df = Hotcoded_X.loc[:,~Hotcoded_X.columns.duplicated()]
 df.head()
 
 #checking that rows 1 in the columns add up to the amount of words in the title
-Hotcoded_X.iloc[99].sum()
-title_list[99]
+Hotcoded_X.iloc[0].sum()
+title_list[0]
 
 
 ##make each entry of categories into a string for Y
@@ -152,8 +150,9 @@ title_list[99]
 #50000 x 100000 y every x is 1 except for where the column corresponds to the word in the title. 
 # for category not looking at words, looking at entire category
 
-Hotcoded_X.head()
-unique_cats[0]
+y_cat_flat = [item for subcat in category_list for item in subcat]
+unique_categories = np.unique(np.array(y_cat_flat))
+len(unique_categories)
 indices = np.array(range(len(unique_categories)), dtype = np.int64)
 indices
 lookuptable = np.column_stack([unique_categories,indices])
@@ -162,22 +161,38 @@ lookuptable
 
 #step 3: apply lookup table to data
 main_result = []
+
+res = []
+for ii in range(len(category_list[0])):
+    res.append(int(lookuptable[lookuptable[:,0]==category_list[0][ii],1][0]))
+main_result.append(res)
+
+main_result
+lookuptable[376]
+
+#### added 
+main_result = []
 for i in range(len(category_list)):
     res = []
     for ii in range(len(category_list[i])):
         res.append(int(lookuptable[lookuptable[:,0]==category_list[i][ii],1][0]))
     main_result.append(res)
-
 main_result
+
 
 #step 4: create dummy encoded data
 
-y_final = np.array([list(np.zeros(len(unique_categories))) for i in range(len(category_list))])
-for i in range(len(category_list)):
+y_final = np.array([list(np.zeros(len(unique_categories))) for i in range(len(category_list[0]))])
+for i in range(len(category_list[0])):
     for ii in range(len(main_result[i])):
-        y_final[i,main_result[i][ii]] = 1  
+        y_final[i,main_result[i][ii]] = 1 
 
-y_final[0].sum()
+
+cheese=pd.DataFrame(y_final).T
+y_final_individual=y_final[0]
+
+ham= pd.DataFrame([y_final[0]])
+
 
 inputs = tf.keras.layers.Input(shape=Hotcoded_X.shape[1], name='input') #Note: shape is a tuple and does not includes records. For a two dimensional input dataset, use (Nbrvariables,). We would use the position after the comma, if it would be a 3-dimensional tensor (e.g., images). Note that (something,) does not create a second dimension. It is just Python's way of generating a tuple (which is required by the Input layer).
 hidden1 = tf.keras.layers.Dense(units=Hotcoded_X.shape[1], activation="sigmoid", name = 'hidden1')(inputs)
@@ -186,15 +201,15 @@ outputs = tf.keras.layers.Dense(units=y_final.shape[1], activation = "sigmoid", 
 
 model = tf.keras.Model(inputs = inputs, outputs = outputs)
 model.compile(loss = 'binary_crossentropy', optimizer = tf.keras.optimizers.SGD(learning_rate = 0.001))
-model.fit(x=Hotcoded_X,y=y_final, batch_size=20, epochs=1)
+model.fit(x=Hotcoded_X,y=ham, batch_size=1, epochs=50)
 yhat = model.predict(x=Hotcoded_X)
-model.evaluate(x=Hotcoded_X,y=y_final)
+model.evaluate(x=Hotcoded_X,y=ham)
 
 title_list[0]
-yhat[0]
+yhat
 sorted(range(len(yhat[0])), key=lambda i: yhat[0][i])[-5:]
-
-lookuptable[886]
+category_batch_list[0]
+lookuptable[1070]
 
 
 #######################################

@@ -1,6 +1,7 @@
 # project1
 
 from codecs import lookup_error
+from nis import cat
 from unicodedata import category
 import numpy as np
 import os
@@ -38,7 +39,7 @@ for d in parse('meta_Clothing_Shoes_and_Jewelry.json.gz'):
     Y = (d['category'])
     category_list.append(Y)
     category_batch_list.append(Y)
-    if i == 5000:
+    if i == 10000:
         break
 
 #tokenizing the words of each title and removing punctuation
@@ -57,3 +58,22 @@ unique_titles= np.unique(np.array(T_cat_flat))
 
 y_cat_flat = [item for subcat in category_list for item in subcat]
 unique_categories = np.unique(np.array(y_cat_flat))
+
+
+####### most common categories
+from collections import Counter
+words_to_count = (word for word in y_cat_flat if word[:1].isupper())
+c = Counter(words_to_count)
+print(c.most_common(100))
+unique_categories=[key for key, _ in c.most_common(500)]
+
+#### lookup table
+indices = np.array(range(len(unique_categories)), dtype = np.int64)
+indices
+lookuptable = np.column_stack([unique_categories,indices])
+lookuptable
+
+
+
+## how to remove categories that are not in top 200 cats
+#category_batch_list[0]=([x for x in category_batch_list[0] if x in unique_categories])
